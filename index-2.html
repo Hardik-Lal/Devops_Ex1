@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker Assignment 1 — Hardik Lal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #f8f8f7;
+    --surface:   #ffffff;
+    --border:    #e4e4e0;
+    --border-2:  #d0d0cc;
+    --text-1:    #1c1c1a;
+    --text-2:    #5a5a56;
+    --text-3:    #9a9a94;
+    --accent:    #2c2c2a;
+    --accent-soft:#f0f0ec;
+    --tag-bg:    #efefec;
+    --radius:    14px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-1);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-1);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+  .logo-mark {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+  }
+  .gh-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--accent);
+    color: #fff;
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .gh-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 5rem 1.5rem 4.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  /* subtle grid texture */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.45;
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 100%, rgba(248,248,247,1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner { position: relative; z-index: 1; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-soft);
+    border: 1px solid var(--border-2);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-2);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 1.75rem;
+  }
+  .chip span { width: 6px; height: 6px; background: var(--text-3); border-radius: 50%; display: inline-block; }
+
+  .hero h1 {
+    font-size: clamp(2rem, 5.5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--text-1);
+    margin-bottom: 1.25rem;
+  }
+  .hero h1 em {
+    font-style: normal;
+    position: relative;
+    display: inline-block;
+  }
+  .hero h1 em::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 2px;
+    width: 100%; height: 3px;
+    background: var(--border-2);
+    border-radius: 2px;
+  }
+
+  .hero-sub {
+    color: var(--text-3);
+    font-size: 14.5px;
+    line-height: 1.7;
+    max-width: 420px;
+    margin: 0 auto 2.5rem;
+  }
+
+  /* ── HERO BUTTONS ── */
+  .hero-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .hero-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 20px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    border: 1.5px solid transparent;
+  }
+  .hero-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .hero-btn .btn-icon { font-size: 18px; line-height: 1; }
+  .hero-btn .btn-body { display: flex; flex-direction: column; text-align: left; }
+  .hero-btn .btn-title { font-size: 13px; font-weight: 700; line-height: 1.2; }
+  .hero-btn .btn-sub   { font-size: 10.5px; font-weight: 400; opacity: 0.7; margin-top: 1px; }
+
+  .btn-gh    { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+  .btn-shots { background: var(--surface); color: var(--text-1); border-color: var(--border-2); }
+  .btn-pdf   { background: #c0392b; color: #fff; box-shadow: 0 2px 8px rgba(192,57,43,0.25); }
+  .btn-md    { background: #1a6b5a; color: #fff; box-shadow: 0 2px 8px rgba(26,107,90,0.25); }
+
+  /* ── META STRIP ── */
+  .meta-strip {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.9rem 2rem;
+    font-size: 12.5px;
+    color: var(--text-2);
+    border-right: 1px solid var(--border);
+  }
+  .meta-item:last-child { border-right: none; }
+  .meta-item .label { color: var(--text-3); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; display: block; }
+  .meta-item .value { font-weight: 600; color: var(--text-1); font-family: 'DM Mono', monospace; font-size: 12px; }
+  .meta-icon { font-size: 16px; opacity: 0.6; }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+  }
+
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 0.9rem;
+    margin-top: 2.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── PROFILE CARD ── */
+  .profile-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    animation: fadeUp 0.4s ease both;
+  }
+  .avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px var(--border);
+  }
+  .profile-name { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+  .profile-batch { font-size: 13px; color: var(--text-2); margin-top: 3px; }
+  .profile-ids {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  .id-pill {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 11.5px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-2);
+  }
+
+  /* ── TOC ── */
+  .toc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .toc-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--bg);
+    font-size: 13.5px;
+    transition: background 0.12s;
+    animation: fadeUp 0.35s ease both;
+  }
+  .toc-row:last-child { border-bottom: none; }
+  .toc-row:hover { background: var(--accent-soft); }
+  .toc-n {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    color: var(--text-3);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+  }
+  .toc-text { font-weight: 600; color: var(--text-1); }
+  .toc-sub  { font-size: 11.5px; color: var(--text-3); margin-top: 1px; }
+  .toc-arr  { margin-left: auto; color: var(--border-2); font-size: 16px; }
+
+  /* ── STEPS ── */
+  .steps-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .step-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 15px 18px;
+    border-bottom: 1px solid var(--bg);
+    animation: fadeUp 0.35s ease both;
+  }
+  .step-row:last-child { border-bottom: none; }
+  .step-dot {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-family: 'DM Mono', monospace;
+  }
+  .step-title { font-size: 13.5px; font-weight: 600; color: var(--text-1); margin-bottom: 3px; }
+  .step-desc  { font-size: 12.5px; color: var(--text-2); line-height: 1.6; }
+  .step-desc code {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11.5px;
+    color: var(--text-1);
+  }
+
+  /* ── TECH TAGS ── */
+  .tech-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tech-tag {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-2);
+    letter-spacing: -0.01em;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .tech-tag:hover { border-color: var(--border-2); color: var(--text-1); }
+
+  /* ── ACCESS CARDS ── */
+  .access-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+  .access-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+  .access-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: var(--radius) var(--radius) 0 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .access-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .access-card:hover::before { opacity: 1; }
+  .ac-gh:hover     { border-color: #2c2c2a; }
+  .ac-gh::before   { background: #2c2c2a; }
+  .ac-shots:hover  { border-color: #b07d2e; }
+  .ac-shots::before{ background: #d4922e; }
+  .ac-pdf:hover    { border-color: #c0392b; }
+  .ac-pdf::before  { background: #c0392b; }
+  .ac-md:hover     { border-color: #1a6b5a; }
+  .ac-md::before   { background: #1a6b5a; }
+  .ac-icon  { font-size: 26px; line-height: 1; }
+  .ac-title { font-size: 14px; font-weight: 700; color: var(--text-1); letter-spacing: -0.01em; margin-bottom: 3px; }
+  .ac-desc  { font-size: 12px; color: var(--text-3); line-height: 1.5; }
+  .ac-arrow { margin-top: auto; font-size: 16px; color: var(--border-2); font-weight: 600; padding-top: 0.25rem; }
+  .ac-gh:hover .ac-arrow     { color: #2c2c2a; }
+  .ac-shots:hover .ac-arrow  { color: #d4922e; }
+  .ac-pdf:hover .ac-arrow    { color: #c0392b; }
+  .ac-md:hover .ac-arrow     { color: #1a6b5a; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    border-top: 1px solid var(--border);
+    padding: 2rem 1.5rem;
+    font-size: 12.5px;
+    color: var(--text-3);
+    background: var(--surface);
+    letter-spacing: -0.01em;
+  }
+  footer strong { color: var(--text-1); font-weight: 600; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-inner { animation: fadeUp 0.5s ease both; }
+  .profile-card { animation-delay: 0.05s; }
+
+  @media (max-width: 560px) {
+    .meta-item { padding: 0.75rem 1rem; }
+    .profile-card { flex-direction: column; text-align: center; }
+    .profile-ids { justify-content: center; }
+    .hero h1 { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a class="logo" href="#">
+    <div class="logo-mark">🐳</div>
+    Docker Assignment 1
+  </a>
+  <a class="gh-btn" href="https://github.com/Hardik-Lal/Devops_Ex1" target="_blank">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+    GitHub Repo
+  </a>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="chip"><span></span> Project Report · March 2026 <span></span></div>
+    <h1>Docker Assignment 1<br>by <em>Hardik Lal</em></h1>
+    <p class="hero-sub">Containerized architecture using Docker Compose, multi-stage builds, advanced networking, and volume persistence.</p>
+    <div class="hero-buttons">
+      <a class="hero-btn btn-gh" href="https://github.com/Hardik-Lal/Devops_Ex1" target="_blank">
+        <span class="btn-icon">🐙</span>
+        <span class="btn-body">
+          <span class="btn-title">GitHub Repo</span>
+          <span class="btn-sub">Browse source files</span>
+        </span>
+      </a>
+      <a class="hero-btn btn-shots" href="https://github.com/Hardik-Lal/Devops_Ex1/tree/main/docker-assignment/Assignment%201%20Screenshots" target="_blank">
+        <span class="btn-icon">🖼️</span>
+        <span class="btn-body">
+          <span class="btn-title">Screenshots</span>
+          <span class="btn-sub">Visual proof of tasks</span>
+        </span>
+      </a>
+      <a class="hero-btn btn-pdf" href="https://github.com/Hardik-Lal/Devops_Ex1/blob/main/docker-assignment/Project_Report.pdf" target="_blank">
+        <span class="btn-icon">📄</span>
+        <span class="btn-body">
+          <span class="btn-title">PDF Report</span>
+          <span class="btn-sub">Download or view</span>
+        </span>
+      </a>
+      <a class="hero-btn btn-md" href="https://github.com/Hardik-Lal/Devops_Ex1/blob/main/docker-assignment/Project_report.md" target="_blank">
+        <span class="btn-icon">📝</span>
+        <span class="btn-body">
+          <span class="btn-title">Markdown Report</span>
+          <span class="btn-sub">Read on GitHub</span>
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- META STRIP -->
+<div class="meta-strip">
+  <div class="meta-item">
+    <span class="meta-icon">👤</span>
+    <div>
+      <span class="label">Student</span>
+      <span class="value">Hardik Lal</span>
+    </div>
+  </div>
+  <div class="meta-item">
+    <span class="meta-icon">🎓</span>
+    <div>
+      <span class="label">Batch</span>
+      <span class="value">Batch 4 · CCVT</span>
+    </div>
+  </div>
+  <div class="meta-item">
+    <span class="meta-icon">🪪</span>
+    <div>
+      <span class="label">SAP ID</span>
+      <span class="value">500120516</span>
+    </div>
+  </div>
+  <div class="meta-item">
+    <span class="meta-icon">📋</span>
+    <div>
+      <span class="label">Roll No</span>
+      <span class="value">R2142230372</span>
+    </div>
+  </div>
+  <div class="meta-item">
+    <span class="meta-icon">📅</span>
+    <div>
+      <span class="label">Date</span>
+      <span class="value">March 2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- QUICK ACCESS CARDS -->
+  <div class="section-label">Quick Access</div>
+  <div class="access-grid">
+    <a class="access-card ac-gh" href="https://github.com/Hardik-Lal/Devops_Ex1" target="_blank">
+      <div class="ac-icon">🐙</div>
+      <div class="ac-body">
+        <div class="ac-title">GitHub Repository</div>
+        <div class="ac-desc">Source code — Dockerfile, compose config, backend, and all project files.</div>
+      </div>
+      <div class="ac-arrow">→</div>
+    </a>
+    <a class="access-card ac-shots" href="https://github.com/Hardik-Lal/Devops_Ex1/tree/main/docker-assignment/Assignment%201%20Screenshots" target="_blank">
+      <div class="ac-icon">🖼️</div>
+      <div class="ac-body">
+        <div class="ac-title">Screenshots</div>
+        <div class="ac-desc">Container IPs, network inspect, volume persistence — visual proof of all tasks.</div>
+      </div>
+      <div class="ac-arrow">→</div>
+    </a>
+    <a class="access-card ac-pdf" href="https://github.com/Hardik-Lal/Devops_Ex1/blob/main/docker-assignment/Project_Report.pdf" target="_blank">
+      <div class="ac-icon">📄</div>
+      <div class="ac-body">
+        <div class="ac-title">PDF Report</div>
+        <div class="ac-desc">Full formatted report with diagrams, screenshots, and analysis.</div>
+      </div>
+      <div class="ac-arrow">→</div>
+    </a>
+    <a class="access-card ac-md" href="https://github.com/Hardik-Lal/Devops_Ex1/blob/main/docker-assignment/Project_report.md" target="_blank">
+      <div class="ac-icon">📝</div>
+      <div class="ac-body">
+        <div class="ac-title">Markdown Report</div>
+        <div class="ac-desc">REPORT.md — readable directly on GitHub with all sections formatted.</div>
+      </div>
+      <div class="ac-arrow">→</div>
+    </a>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="section-label">Student Info</div>
+  <div class="profile-card">
+    <div class="avatar">👨‍💻</div>
+    <div>
+      <div class="profile-name">Hardik Lal</div>
+      <div class="profile-batch">Batch 4 · CCVT · March 2026</div>
+      <div class="profile-ids">
+        <span class="id-pill">SAP: 500120516</span>
+        <span class="id-pill">Roll: R2142230372</span>
+        <span class="id-pill">🐳 Docker Assignment 1</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="section-label">Report Contents</div>
+  <div class="toc-card">
+    <div class="toc-row">
+      <div class="toc-n">01</div>
+      <div><div class="toc-text">Introduction</div><div class="toc-sub">Project overview, goals, and two-service architecture</div></div>
+      <div class="toc-arr">›</div>
+    </div>
+    <div class="toc-row">
+      <div class="toc-n">02</div>
+      <div><div class="toc-text">System Architecture</div><div class="toc-sub">Backend + PostgreSQL design with Docker Compose</div></div>
+      <div class="toc-arr">›</div>
+    </div>
+    <div class="toc-row">
+      <div class="toc-n">03</div>
+      <div><div class="toc-text">Multi-Stage Build Optimization</div><div class="toc-sub">Reducing image size with layered build stages</div></div>
+      <div class="toc-arr">›</div>
+    </div>
+    <div class="toc-row">
+      <div class="toc-n">04</div>
+      <div><div class="toc-text">Network Design</div><div class="toc-sub">Bridge, IPvlan, and Macvlan — setup and comparison</div></div>
+      <div class="toc-arr">›</div>
+    </div>
+    <div class="toc-row">
+      <div class="toc-n">05</div>
+      <div><div class="toc-text">CI/CD Pipeline</div><div class="toc-sub">Automated build and deployment workflow</div></div>
+      <div class="toc-arr">›</div>
+    </div>
+    <div class="toc-row">
+      <div class="toc-n">06</div>
+      <div><div class="toc-text">Volume Persistence</div><div class="toc-sub">Data surviving container restarts with named volumes</div></div>
+      <div class="toc-arr">›</div>
+    </div>
+    <div class="toc-row">
+      <div class="toc-n">07</div>
+      <div><div class="toc-text">Cloud Deployment</div><div class="toc-sub">AWS integration and container orchestration with Kubernetes</div></div>
+      <div class="toc-arr">›</div>
+    </div>
+    <div class="toc-row">
+      <div class="toc-n">08</div>
+      <div><div class="toc-text">Conclusion</div><div class="toc-sub">Key outcomes and learnings</div></div>
+      <div class="toc-arr">›</div>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="section-label">How to Run</div>
+  <div class="steps-card">
+    <div class="step-row">
+      <div class="step-dot">1</div>
+      <div>
+        <div class="step-title">Clone the Repository</div>
+        <div class="step-desc">Open terminal and run <code>git clone &lt;repo-url&gt;</code>, then <code>cd</code> into the project folder.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-dot">2</div>
+      <div>
+        <div class="step-title">Build & Start Containers</div>
+        <div class="step-desc">Run <code>docker compose up --build</code> to build images and start all services.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-dot">3</div>
+      <div>
+        <div class="step-title">Access the Application</div>
+        <div class="step-desc">Navigate to <code>localhost:3000</code> in your browser once containers are running.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-dot">4</div>
+      <div>
+        <div class="step-title">Inspect Networks & Volumes</div>
+        <div class="step-desc">Use <code>docker network inspect</code> and <code>docker volume ls</code> to verify setup.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-dot">5</div>
+      <div>
+        <div class="step-title">Tear Down</div>
+        <div class="step-desc">Run <code>docker compose down -v</code> to stop and clean up all containers and volumes.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TECH -->
+  <div class="section-label">Technologies Used</div>
+  <div class="tech-wrap">
+    <span class="tech-tag">🐳 Docker</span>
+    <span class="tech-tag">🔧 Docker Compose</span>
+    <span class="tech-tag">☸️ Kubernetes</span>
+    <span class="tech-tag">☁️ AWS</span>
+    <span class="tech-tag">🐍 Python</span>
+    <span class="tech-tag">🌶️ Flask</span>
+    <span class="tech-tag">⚡ Node.js</span>
+    <span class="tech-tag">🚀 Express.js</span>
+    <span class="tech-tag">🗄️ PostgreSQL</span>
+    <span class="tech-tag">🔄 CI/CD Pipelines</span>
+    <span class="tech-tag">🏗️ Multi-Stage Builds</span>
+    <span class="tech-tag">🌐 IPvlan / Macvlan</span>
+    <span class="tech-tag">💾 Volume Persistence</span>
+    <span class="tech-tag">🐧 Alpine Linux</span>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  Submitted by <strong>Hardik Lal</strong> · Batch 4 CCVT · SAP ID 500120516 · Roll No R2142230372 · March 2026
+</footer>
+
+</body>
+</html>
